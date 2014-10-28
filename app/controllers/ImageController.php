@@ -10,6 +10,7 @@ class ImageController extends BaseController {
     public function getIndex(){
         return View::make('board.index');
     }
+
     public function postIndex(){
         //Let's validate the form first with the rules which are set at the model
         $data = Input::all();
@@ -36,19 +37,11 @@ class ImageController extends BaseController {
 
             $fullname = Str::slug(Str::random(8).$filename).'.'.$image->getClientOriginalExtension();
 
-            //We upload the image first to the upload folder, then get make a thumbnail from the uploaded image
-
-            //$upload = $image->move(Config::get('image.upload_folder'));
-            $upload = Image::make($image)->resize(Config::get('image.thumb_width'),Config::get('image.thumb_height'))->save(public_path().Config::get('image.upload_folder').$fullname);
-            //Image::make($image)->resize(300, 200)->save('foo.jpg');
-            //dd('hello');
-
-            //Our model that we've created is named Photo, this library has an alias named Image, don't mix them two!
-            //These parameters are related to the image processing class that we've included, not really related to Laravel
-
-            // ! Image::make(Config::get('image.upload_folder').'/'.$fullname)->resize(Config::get('image.thumb_width'),null,true)->save(Config::get('image.thumb_folder').'/'.$fullname);
-
-            //Image::make($image)->resize(300, 200)->save('foo.jpg'); --it works
+            // Now upload the image by resizing it.
+            $upload = Image::make($image)
+                        ->resize(Config::get('image.thumb_width'),Config::get('image.thumb_height'))
+                        ->save(public_path().Config::get('image.upload_folder').$fullname);
+            //Image::make($image)->resize(300, 200)->save('foo.jpg'); -- simple/easy upload
 
             if($upload){
                 //image is now uploaded, we first need to add column to the database
@@ -56,13 +49,17 @@ class ImageController extends BaseController {
                     'title' => Input::get('title'),
                     'image' => $fullname
                 );
-                $insert_id = Photo::create($photo)->id;
-//                $insert_id = DB::table('photos')->insertGetId(
-//                    array(
-//                        'title' => Input::get('title'),
-//                        'image' => $fullname
-//                    )
-//                );
+                $insert_id = Photo::create($photo)->id; // using Eloquent ORM get the last insert id
+
+                // Using Fluent ORM, timestamps are not automatically updated.
+/*                $insert_id = DB::table('photos')->insertGetId(
+                     array(
+                          'title' => Input::get('title'),
+                          'image' => $fullname
+                     )
+                  );
+*/
+
                 //Now we redirect to the image's permalink
                 return Redirect::to(URL::to('snatch/'.$insert_id))->with('success','Your image is uploaded successfully');
             }
@@ -75,6 +72,7 @@ class ImageController extends BaseController {
         }
         return View::make('board.index');
     }
+
     public function getSnatch($id){
         // Let's try to find the image from database first
         $image = Photo::find($id);
@@ -88,6 +86,7 @@ class ImageController extends BaseController {
             return Redirect::to('/')->with('error','Image Not Found');
         }
     }
+
     public function getAll(){
         //Let's first take all images with a pagination feature
         $all_images = DB::table('photos')->orderBy('id','desc')->paginate(6);
