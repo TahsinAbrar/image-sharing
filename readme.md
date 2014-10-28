@@ -1,25 +1,68 @@
-## Laravel PHP Framework
+## Image Upload with Laravel
 
-[![Build Status](https://travis-ci.org/laravel/framework.svg)](https://travis-ci.org/laravel/framework)
-[![Total Downloads](https://poser.pugx.org/laravel/framework/downloads.svg)](https://packagist.org/packages/laravel/framework)
-[![Latest Stable Version](https://poser.pugx.org/laravel/framework/v/stable.svg)](https://packagist.org/packages/laravel/framework)
-[![Latest Unstable Version](https://poser.pugx.org/laravel/framework/v/unstable.svg)](https://packagist.org/packages/laravel/framework)
-[![License](https://poser.pugx.org/laravel/framework/license.svg)](https://packagist.org/packages/laravel/framework)
+An image upload website built wih laravel framework.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable, creative experience to be truly fulfilling. Laravel attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as authentication, routing, sessions, and caching.
+Instructions:
+----------
 
-Laravel aims to make the development process a pleasing one for the developer without sacrificing application functionality. Happy developers make the best code. To this end, we've attempted to combine the very best of what we have seen in other web frameworks, including frameworks implemented in other languages, such as Ruby on Rails, ASP.NET MVC, and Sinatra.
+* **First:** Create a Migration file for table 'photos'
 
-Laravel is accessible, yet powerful, providing powerful tools needed for large, robust applications. A superb inversion of control container, expressive migration system, and tightly integrated unit testing support give you the tools you need to build any application with which you are tasked.
+*Command:*
+```
+php artisan migrate:make create_photos_table```
 
-## Official Documentation
 
-Documentation for the entire framework can be found on the [Laravel website](http://laravel.com/docs).
+* In this project, we need to use **Intervention/image** package
+* Just add ```"intervention/image": "dev-master"```
+ in the ```required``` field.
 
-### Contributing To Laravel
+Then update the composer:
+```
+composer update intervention/image```
 
-**All issues and pull requests should be filed on the [laravel/framework](http://github.com/laravel/framework) repository.**
 
-### License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT)
+Here, after installing the package, when you'll try to access the package, at that time you maybe get an error message.
+
+ To fix this error, we need to change **php.ini** file and uncomment ```;extension=php_fileinfo.dll``` in the *php.ini* file.
+
+* Then add the providers and aliases for image configuration in the ```
+app/config/app.php```.
+
+Add this in the ```provider```
+ :
+```
+'Intervention\Image\ImageServiceProvider'```
+
+
+Add this in the ```aliases```
+ :
+```
+'Image' => 'Intervention\Image\Facades\Image',```
+
+
+* Create a layout page and create a form to upload the image in the database.
+* To upload an image to the server, we need to specify the path. In the ```app/config/image.php```
+ configuration file, we specify that,
+```
+ 'upload_folder' => '/uploads/',```
+
+ That means our files will be uploaded to ```'uploads'``` folder that resides in the public directory.
+
+ But when we are uploading the file, we have to specify the full path like this:
+ ```
+$upload = Image::make($image)
+    ->resize(Config::get('image.thumb_width'),Config::get('image.thumb_height'))
+    ->save(public_path().Config::get('image.upload_folder').$fullname);```
+
+Here, we have to add ```public_path()```before the ```Config::get('image.upload_folder')```
+
+And also with this code, we can resize the image first and then uploaded the image.
+
+
+Visit my website: [http://tahsinabrar.com](http://tahsinabrar.com)
+
+
+
+
+
