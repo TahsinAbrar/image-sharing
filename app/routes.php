@@ -21,3 +21,7 @@ Route::post('/', array(
     'before'    =>  'csrf',
     'uses'      =>  'ImageController@postIndex'
 ));
+Route::get('snatch/{id}',array(
+    'as'=>'get_image_information',
+    'uses' => 'ImageController@getSnatch')
+)->where('id','[0-9]+');

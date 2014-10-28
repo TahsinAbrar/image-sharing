@@ -39,8 +39,9 @@ class ImageController extends BaseController {
             //We upload the image first to the upload folder, then get make a thumbnail from the uploaded image
 
             //$upload = $image->move(Config::get('image.upload_folder'));
-            $upload = Image::make($image)->resize(Config::get('image.thumb_width'),Config::get('image.thumb_height'))->save(Config::get('image.upload_folder').$fullname);
-
+            $upload = Image::make($image)->resize(Config::get('image.thumb_width'),Config::get('image.thumb_height'))->save(public_path().Config::get('image.upload_folder').$fullname);
+            //Image::make($image)->resize(300, 200)->save('foo.jpg');
+            //dd('hello');
 
             //Our model that we've created is named Photo, this library has an alias named Image, don't mix them two!
             //These parameters are related to the image processing class that we've included, not really related to Laravel
@@ -70,5 +71,18 @@ class ImageController extends BaseController {
             }
         }
         return View::make('board.index');
+    }
+    public function getSnatch($id){
+        // Let's try to find the image from database first
+        $image = Photo::find($id);
+
+        // If found, we load the view and pass the image info as parameter
+        if($image){
+          return View::make('board.permalink')->with('image',$image);
+        }
+        else {
+            // else we redirect to main page with error message
+            return Redirect::to('/')->with('error','Image Not Found');
+        }
     }
 } 
