@@ -94,4 +94,19 @@ class ImageController extends BaseController {
         //Then let's load the view with found data and pass the variable to the view
         return View::make('board.all_images')->with('images',$all_images);
     }
+
+    public function getDelete($id){
+        $image = Photo::find($id);
+        if($image){
+            //First, let's delete the images from FTP
+            File::delete(public_path().Config::get('image.upload_folder').$image->image);
+            //Now let's delete the value from database
+            $image->delete();
+            return Redirect::to('/')->with('success', 'Succesfully deleted the image');
+        }
+        else {
+            //Image not found, so we will redirect to the index page with an error message flash data.
+            return Redirect::to('/')->with('error', 'No image with given ID found.');
+        }
+    }
 } 

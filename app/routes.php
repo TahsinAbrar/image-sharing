@@ -30,3 +30,8 @@ Route::get('all', array(
     'as' => 'all_images',
     'uses' => 'ImageController@getAll'
 ));
+
+Route::get('delete/{id}', array(
+    'as' => 'delete_image',
+    'uses' => 'ImageController@getDelete'
+))->where('id', '[0-9]+');

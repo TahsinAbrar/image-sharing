@@ -18,3 +18,16 @@ li{float:left;margin-right:10px}/*For the input files of the form*/
 input{float:left; width:100%; border-radius:13px;
     font-size:20px; height:30px; border:10px 0 10px 0;
     margin-bottom:20px}
+.btn.btn-danger {
+    background: #ff0A0A;
+    color: #ffffff;
+    font-size: 21px;
+    border-radius: 25px;
+    width: 180px;
+    height: 50px;
+    padding: 10px 0 0 10px;
+}
+.btn.btn-danger a {
+    color: #ffffff;
+    font-weight: 700;
+}
