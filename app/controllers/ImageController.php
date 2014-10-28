@@ -50,16 +50,19 @@ class ImageController extends BaseController {
 
             //Image::make($image)->resize(300, 200)->save('foo.jpg'); --it works
 
-            //If the file is now uploaded, we show an error message to the user,
-            //else we add a new column to the database and show the success message
             if($upload){
                 //image is now uploaded, we first need to add column to the database
-                $insert_id = DB::table('photos')->insertGetId(
-                    array(
-                        'title' => Input::get('title'),
-                        'image' => $fullname
-                    )
+                $photo = array(
+                    'title' => Input::get('title'),
+                    'image' => $fullname
                 );
+                $insert_id = Photo::create($photo)->id;
+//                $insert_id = DB::table('photos')->insertGetId(
+//                    array(
+//                        'title' => Input::get('title'),
+//                        'image' => $fullname
+//                    )
+//                );
                 //Now we redirect to the image's permalink
                 return Redirect::to(URL::to('snatch/'.$insert_id))->with('success','Your image is uploaded successfully');
             }
@@ -84,5 +87,12 @@ class ImageController extends BaseController {
             // else we redirect to main page with error message
             return Redirect::to('/')->with('error','Image Not Found');
         }
+    }
+    public function getAll(){
+        //Let's first take all images with a pagination feature
+        $all_images = DB::table('photos')->orderBy('id','desc')->paginate(6);
+
+        //Then let's load the view with found data and pass the variable to the view
+        return View::make('board.all_images')->with('images',$all_images);
     }
 } 

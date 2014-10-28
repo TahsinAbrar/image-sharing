@@ -25,3 +25,8 @@ Route::get('snatch/{id}',array(
     'as'=>'get_image_information',
     'uses' => 'ImageController@getSnatch')
 )->where('id','[0-9]+');
+
+Route::get('all', array(
+    'as' => 'all_images',
+    'uses' => 'ImageController@getAll'
+));

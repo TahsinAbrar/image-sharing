@@ -1,4 +1,4 @@
-@extends('...frontend_master')
+@extends('frontend_master')
 
 @section('content')
 <div>
